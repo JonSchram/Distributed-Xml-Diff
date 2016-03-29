@@ -92,8 +92,17 @@ public abstract class OrderedNode implements Node {
 
   @Override
   public Node appendChild(Node newChild) throws DOMException {
-    children.addNode(newChild);
-    return newChild;
+    if (newChild.getOwnerDocument().equals(this.getOwnerDocument())) {
+      OrderedNode lastChild = (OrderedNode) getLastChild();
+      lastChild.setNextSibling(newChild);
+      ((OrderedNode) newChild).setPreviousSibling(lastChild);
+      children.addNode(newChild);
+
+      return newChild;
+    } else {
+      throw new DOMException(DOMException.WRONG_DOCUMENT_ERR,
+          "New child is from a different document");
+    }
   }
 
   @Override
@@ -195,12 +204,34 @@ public abstract class OrderedNode implements Node {
   @Override
   public Node insertBefore(Node newChild, Node refChild) throws DOMException {
     if (refChild == null) {
+      if (getLastChild() != null) {
+        ((OrderedNode) getLastChild()).setNextSibling(newChild);
+        ((OrderedNode) newChild).setPreviousSibling(getLastChild());
+      }
       children.addNode(newChild);
     } else {
       int position = children.findNode(refChild);
-      if (position >= 0) {
+      if (position == 0) {
+        OrderedNode next = (OrderedNode) children.item(1);
+        if (next != null) {
+          next.setPreviousSibling(newChild);
+          ((OrderedNode) newChild).setNextSibling(next);
+        }
+        children.addNode(newChild, 0);
+      } else if (position > 0 && position < children.getLength() - 1) {
+        OrderedNode previous = (OrderedNode) children.item(position - 1);
+        OrderedNode next = (OrderedNode) children.item(position + 1);
+        previous.setNextSibling(newChild);
+        next.setPreviousSibling(newChild);
+        ((OrderedNode) newChild).setPreviousSibling(previous);
+        ((OrderedNode) newChild).setNextSibling(next);
         children.addNode(newChild, position);
       } else {
+        OrderedNode previous = (OrderedNode) getLastChild();
+        if (previous != null) {
+          ((OrderedNode) newChild).setPreviousSibling(previous);
+          previous.setNextSibling(newChild);
+        }
         children.addNode(newChild);
       }
     }
@@ -326,6 +357,10 @@ public abstract class OrderedNode implements Node {
   public Node removeChild(Node paramNode) throws DOMException {
     int position = children.findNode(paramNode);
     if (position >= 0) {
+      OrderedNode previous = (OrderedNode) paramNode.getPreviousSibling();
+      OrderedNode next = (OrderedNode) paramNode.getNextSibling();
+      previous.setNextSibling(next);
+      next.setPreviousSibling(previous);
       children.removeNode(position);
     }
     return paramNode;

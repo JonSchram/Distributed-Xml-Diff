@@ -197,7 +197,7 @@ public class OrderedElement extends OrderedNode implements Element {
   @Override
   public String getTagName() {
     if (getPrefix() != null) {
-      return getPrefix() + ":" + getNodeName();
+      return getPrefix() + ":" + getLocalName();
     }
     return getNodeName();
   }
@@ -286,10 +286,12 @@ public class OrderedElement extends OrderedNode implements Element {
   }
 
   @Override
-  public void setIdAttributeNS(String paramString1, String paramString2,
-      boolean paramBoolean) throws DOMException {
-    throw new DOMException(DOMException.NOT_SUPPORTED_ERR,
-        "Namespaces " + UNSUPPORTED_SUFFIX);
+  public void setIdAttributeNS(String namespaceUri, String localName,
+      boolean isId) throws DOMException {
+    Node node = attributes.getNamedItemNS(namespaceUri, localName);
+    if (node != null) {
+      ((OrderedAttribute) node).setId(isId);
+    }
   }
 
   public void setLocalName(String name) {

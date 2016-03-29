@@ -1,6 +1,7 @@
 package com.github.jonschram.xml.diff.framework.document.distributed;
 
-import com.github.jonschram.xml.diff.framework.document.OrderedDocument;
+import java.util.List;
+import java.util.Set;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
@@ -24,26 +25,21 @@ import org.w3c.dom.traversal.NodeFilter;
 import org.w3c.dom.traversal.NodeIterator;
 import org.w3c.dom.traversal.TreeWalker;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.github.jonschram.xml.diff.framework.document.OrderedNode;
 
-public class DistributedDocument extends OrderedDocument
+public class DistributedDocument extends OrderedNode
     implements Document, DocumentTraversal {
   private static final String ERROR_SUFFIX = " not supported for distributed document";
 
   private RandomAccessElement root;
 
-  private Map<String, Object> userData;
-
   /**
    * Creates distributed document.
    */
   public DistributedDocument() {
+    super();
     root = new RandomAccessElement("root", this);
     root.setParentNode(this);
-    userData = new HashMap<>();
   }
 
   @Override
@@ -74,19 +70,6 @@ public class DistributedDocument extends OrderedDocument
     }
 
     return newNode;
-  }
-
-  @Override
-  public Attr createAttribute(String name) throws DOMException {
-    throw new DOMException(DOMException.NOT_SUPPORTED_ERR,
-        "createAttribute" + ERROR_SUFFIX);
-  }
-
-  @Override
-  public Attr createAttributeNS(String namespaceUri, String qualifiedName)
-      throws DOMException {
-    throw new DOMException(DOMException.NOT_SUPPORTED_ERR,
-        "createAttributeNS" + ERROR_SUFFIX);
   }
 
   @Override
@@ -331,7 +314,7 @@ public class DistributedDocument extends OrderedDocument
 
   @Override
   public Object getUserData(String key) {
-    return userData.get(key);
+    return super.getUserData(key);
   }
 
   @Override
@@ -499,6 +482,19 @@ public class DistributedDocument extends OrderedDocument
   @Override
   public TreeWalker createTreeWalker(Node paramNode, int paramInt,
       NodeFilter paramNodeFilter, boolean paramBoolean) throws DOMException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Attr createAttribute(String name) throws DOMException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Attr createAttributeNS(String namespaceURI, String qualifiedName)
+      throws DOMException {
     // TODO Auto-generated method stub
     return null;
   }
