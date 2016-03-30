@@ -1,13 +1,22 @@
 package com.github.jonschram.xml.diff.framework.document;
 
 import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 public class OrderedText extends OrderedCharacterData implements Text {
 
+  public OrderedText(Document ownerDocument) {
+    this(null, ownerDocument);
+  }
+
   public OrderedText(String data) {
-    super(data);
+    this(data, null);
+  }
+
+  public OrderedText(String data, Document ownerDocument) {
+    super(data, ownerDocument);
   }
 
   @Override

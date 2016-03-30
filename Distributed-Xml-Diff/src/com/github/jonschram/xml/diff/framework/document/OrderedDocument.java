@@ -51,6 +51,9 @@ public class OrderedDocument extends OrderedNode implements Document {
       sourceAttribute.setOwnerElement(null);
     }
     if (source instanceof OrderedNode) {
+      if (source.getParentNode() != null) {
+        source.getParentNode().removeChild(source);
+      }
       OrderedNode orderedSource = (OrderedNode) source;
       orderedSource.setOwnerDocument(this);
       orderedSource.setParentNode(root);
@@ -101,52 +104,59 @@ public class OrderedDocument extends OrderedNode implements Document {
 
   @Override
   public CDATASection createCDATASection(String arg0) throws DOMException {
-    // TODO Auto-generated method stub
-    return null;
+    return new OrderedCData(this);
   }
 
   @Override
   public Comment createComment(String arg0) {
-    // TODO Auto-generated method stub
-    return null;
+    return new OrderedComment(this);
   }
 
   @Override
   public DocumentFragment createDocumentFragment() {
-    // TODO Auto-generated method stub
-    return null;
+    return new OrderedDocumentFragment(this);
   }
 
   @Override
-  public Element createElement(String arg0) throws DOMException {
-    // TODO Auto-generated method stub
-    return null;
+  public Element createElement(String tagName) throws DOMException {
+    return new OrderedElement(tagName, this);
   }
 
   @Override
-  public Element createElementNS(String arg0, String arg1) throws DOMException {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public EntityReference createEntityReference(String arg0)
+  public Element createElementNS(String namespaceUri, String qualifiedName)
       throws DOMException {
-    // TODO Auto-generated method stub
-    return null;
+
+    OrderedElement newElement = new OrderedElement(qualifiedName, this);
+    newElement.setNodeName(qualifiedName);
+    newElement.setNamespaceUri(namespaceUri);
+
+    int colonPosition = qualifiedName.indexOf(':');
+    if (colonPosition > -1) {
+      newElement.setPrefix(qualifiedName.substring(0, colonPosition));
+      newElement.setLocalName(qualifiedName.substring(colonPosition + 1));
+    } else {
+      newElement.setPrefix(null);
+      newElement.setLocalName(qualifiedName);
+    }
+
+    return newElement;
   }
 
   @Override
-  public ProcessingInstruction createProcessingInstruction(String arg0,
-      String arg1) throws DOMException {
-    // TODO Auto-generated method stub
-    return null;
+  public EntityReference createEntityReference(String name)
+      throws DOMException {
+    return new OrderedEntityReference(name, this);
   }
 
   @Override
-  public Text createTextNode(String arg0) {
-    // TODO Auto-generated method stub
-    return null;
+  public ProcessingInstruction createProcessingInstruction(String target,
+      String data) throws DOMException {
+    return new OrderedProcessingInstruction(target, data, this);
+  }
+
+  @Override
+  public Text createTextNode(String data) {
+    return new OrderedText(data, this);
   }
 
   @Override

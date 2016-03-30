@@ -20,6 +20,7 @@ public class OrderedElement extends OrderedNode implements Element {
   private static String UNSUPPORTED_SUFFIX = " not supported for "
       + OrderedElement.class.toString();
 
+  private String tagName;
   private String localName;
   private String prefix;
   private String namespaceUri;
@@ -33,19 +34,20 @@ public class OrderedElement extends OrderedNode implements Element {
     this("", null);
   }
 
-  public OrderedElement(String nodeName) {
-    this(nodeName, null);
+  public OrderedElement(String tagName) {
+    this(tagName, null);
   }
 
-  public OrderedElement(String nodeName, Document ownerDocument) {
-    this(nodeName, ownerDocument, null);
+  public OrderedElement(String tagName, Document ownerDocument) {
+    this(tagName, ownerDocument, null);
   }
 
-  public OrderedElement(String nodeName, Document ownerDocument,
+  public OrderedElement(String tagName, Document ownerDocument,
       Node parentNode) {
     super(ownerDocument, parentNode);
     attributes = new AttributesMap();
-    localName = nodeName;
+    localName = null;
+    this.tagName = tagName;
   }
 
   @Override
@@ -196,10 +198,10 @@ public class OrderedElement extends OrderedNode implements Element {
 
   @Override
   public String getTagName() {
-    if (getPrefix() != null) {
+    if (getLocalName() != null) {
       return getPrefix() + ":" + getLocalName();
     }
-    return getNodeName();
+    return tagName;
   }
 
   @Override
@@ -302,6 +304,10 @@ public class OrderedElement extends OrderedNode implements Element {
     this.namespaceUri = namespaceUri;
   }
 
+  public void setNodeName(String nodeName) {
+    setTagName(nodeName);
+  }
+
   @Override
   public void setNodeValue(String paramString) throws DOMException {
     // no node value
@@ -310,6 +316,10 @@ public class OrderedElement extends OrderedNode implements Element {
   @Override
   public void setPrefix(String prefix) throws DOMException {
     this.prefix = prefix;
+  }
+
+  public void setTagName(String tagName) {
+    this.tagName = tagName;
   }
 
 }

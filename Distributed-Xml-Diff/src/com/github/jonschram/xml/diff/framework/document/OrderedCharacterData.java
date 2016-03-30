@@ -2,6 +2,7 @@ package com.github.jonschram.xml.diff.framework.document;
 
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 
 public abstract class OrderedCharacterData extends OrderedNode
@@ -9,7 +10,8 @@ public abstract class OrderedCharacterData extends OrderedNode
 
   private String data;
 
-  public OrderedCharacterData(String data) {
+  public OrderedCharacterData(String data, Document ownerDocument) {
+    super(ownerDocument);
     this.data = data;
   }
 
